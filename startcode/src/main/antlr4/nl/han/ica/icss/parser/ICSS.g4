@@ -45,5 +45,28 @@ ASSIGNMENT_OPERATOR: ':=';
 
 
 //--- PARSER: ---
-stylesheet: EOF;
+stylesheet: variable* stylerule* EOF;
+
+idSelector: ID_IDENT;
+
+classSelector: CLASS_IDENT;
+
+tagSelector: LOWER_IDENT | CAPITAL_IDENT;
+
+stylerule: (idSelector | classSelector | tagSelector) OPEN_BRACE declaration* CLOSE_BRACE;
+
+declaration: LOWER_IDENT COLON value SEMICOLON;
+
+colorLiteral: COLOR;
+
+pixelLiteral: PIXELSIZE;
+
+scalarLiteral: SCALAR;
+
+variableLiteral: (LOWER_IDENT | CAPITAL_IDENT);
+
+value: colorLiteral | pixelLiteral | scalarLiteral | variableLiteral;
+
+variable: (LOWER_IDENT | CAPITAL_IDENT) ASSIGNMENT_OPERATOR (TRUE | FALSE | PIXELSIZE | PERCENTAGE | SCALAR | COLOR) SEMICOLON;
+
 
