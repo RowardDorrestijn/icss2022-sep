@@ -45,30 +45,22 @@ ASSIGNMENT_OPERATOR: ':=';
 
 
 //--- PARSER: ---
-stylesheet: variable* stylerule* EOF;
+stylesheet: variableAssignment* stylerule* EOF;
 
 idSelector: ID_IDENT;
 
 classSelector: CLASS_IDENT;
 
-lowerOrCapitalIdent: LOWER_IDENT | CAPITAL_IDENT;
-
-tagSelector: lowerOrCapitalIdent;
+tagSelector: LOWER_IDENT | CAPITAL_IDENT;
 
 stylerule: (idSelector | classSelector | tagSelector) OPEN_BRACE declaration* CLOSE_BRACE;
 
-declaration: LOWER_IDENT COLON value SEMICOLON;
+declaration: LOWER_IDENT COLON (literal | variableReference) SEMICOLON;
 
-colorLiteral: COLOR;
+literal: COLOR #colorLiteral | PIXELSIZE #pixelLiteral | SCALAR #scalarLiteral | PERCENTAGE #percentageLiteral | TRUE #trueLiteral | FALSE #falseLiteral;
 
-pixelLiteral: PIXELSIZE;
+variableReference: CAPITAL_IDENT;
 
-scalarLiteral: SCALAR;
-
-variableLiteral: lowerOrCapitalIdent;
-
-value: colorLiteral | pixelLiteral | scalarLiteral | variableLiteral;
-
-variable: (LOWER_IDENT | CAPITAL_IDENT) ASSIGNMENT_OPERATOR (TRUE | FALSE | PIXELSIZE | PERCENTAGE | SCALAR | COLOR) SEMICOLON;
+variableAssignment: variableReference ASSIGNMENT_OPERATOR (literal | variableReference) SEMICOLON;
 
 

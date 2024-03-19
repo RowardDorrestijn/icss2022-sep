@@ -6,6 +6,7 @@ import java.util.Stack;
 import com.sun.jdi.Value;
 import nl.han.ica.datastructures.HANStack;
 import nl.han.ica.icss.ast.*;
+import nl.han.ica.icss.ast.literals.BoolLiteral;
 import nl.han.ica.icss.ast.literals.ColorLiteral;
 import nl.han.ica.icss.ast.literals.PixelLiteral;
 import nl.han.ica.icss.ast.literals.ScalarLiteral;
@@ -42,14 +43,12 @@ public class ASTListener extends ICSSBaseListener {
 		ast.setRoot(stylesheet);
 	}
 
-	@Override public void enterVariable(ICSSParser.VariableContext ctx) {
+	@Override public void enterVariableAssignment(ICSSParser.VariableAssignmentContext ctx) {
 		VariableAssignment variable = new VariableAssignment();
-		variable.name = new VariableReference(ctx.ASSIGNMENT_OPERATOR().getText());
-//		variable.expression = ctx.
 		currentContainer.push(variable);
 	}
 
-	@Override public void exitVariable(ICSSParser.VariableContext ctx) {
+	@Override public void exitVariableAssignment(ICSSParser.VariableAssignmentContext ctx) {
 		VariableAssignment variable = (VariableAssignment) currentContainer.pop();
 		currentContainer.peek().addChild(variable);
 	}
@@ -104,41 +103,61 @@ public class ASTListener extends ICSSBaseListener {
 	}
 
 	@Override public void enterColorLiteral(ICSSParser.ColorLiteralContext ctx){
-		ColorLiteral colorLiteral = new ColorLiteral(ctx.getText());
+		Literal colorLiteral = new ColorLiteral(ctx.getText());
 		currentContainer.push(colorLiteral);
 	}
 
 	@Override public void exitColorLiteral(ICSSParser.ColorLiteralContext ctx){
-		ColorLiteral colorLiteral = (ColorLiteral) currentContainer.pop();
+		Literal colorLiteral = (ColorLiteral) currentContainer.pop();
 		currentContainer.peek().addChild(colorLiteral);
 	}
 
 	@Override public void enterPixelLiteral(ICSSParser.PixelLiteralContext ctx){
-		PixelLiteral pixelLiteral = new PixelLiteral(ctx.getText());
+		Literal pixelLiteral = new PixelLiteral(ctx.getText());
 		currentContainer.push(pixelLiteral);
 	}
 
 	@Override public void exitPixelLiteral(ICSSParser.PixelLiteralContext ctx){
-		PixelLiteral pixelLiteral = (PixelLiteral) currentContainer.pop();
+		Literal pixelLiteral = (PixelLiteral) currentContainer.pop();
 		currentContainer.peek().addChild(pixelLiteral);
 	}
 
 	@Override public void enterScalarLiteral(ICSSParser.ScalarLiteralContext ctx){
-		ScalarLiteral scalarLiteral = new ScalarLiteral(ctx.getText());
+		Literal scalarLiteral = new ScalarLiteral(ctx.getText());
 		currentContainer.push(scalarLiteral);
 	}
 
 	@Override public void exitScalarLiteral(ICSSParser.ScalarLiteralContext ctx){
-		ScalarLiteral scalarLiteral = (ScalarLiteral) currentContainer.pop();
+		Literal scalarLiteral = (ScalarLiteral) currentContainer.pop();
 		currentContainer.peek().addChild(scalarLiteral);
 	}
 
-	@Override public void enterVariableLiteral(ICSSParser.VariableLiteralContext ctx){
+	@Override public void enterTrueLiteral(ICSSParser.TrueLiteralContext ctx){
+		Literal trueLiteral = new BoolLiteral(ctx.getText());
+		currentContainer.push(trueLiteral);
+	}
+
+	@Override public void exitTrueLiteral(ICSSParser.TrueLiteralContext ctx){
+		Literal trueLiteral = (BoolLiteral) currentContainer.pop();
+		currentContainer.peek().addChild(trueLiteral);
+	}
+
+	@Override public void enterFalseLiteral(ICSSParser.FalseLiteralContext ctx){
+		Literal falseLiteral = new BoolLiteral(ctx.getText());
+		currentContainer.push(falseLiteral);
+	}
+
+	@Override public void exitFalseLiteral(ICSSParser.FalseLiteralContext ctx){
+		Literal falseLiteral = (BoolLiteral) currentContainer.pop();
+		currentContainer.peek().addChild(falseLiteral);
+	}
+
+	@Override public void enterVariableReference(ICSSParser.VariableReferenceContext ctx){
 		VariableReference variableLiteral = new VariableReference(ctx.getText());
 		currentContainer.push(variableLiteral);
 	}
 
-	@Override public void exitVariableLiteral(ICSSParser.VariableLiteralContext ctx){
+	@Override public void exitVariableReference(ICSSParser.VariableReferenceContext ctx){
 		VariableReference variableLiteral = (VariableReference) currentContainer.pop();
 		currentContainer.peek().addChild(variableLiteral);
 	}
