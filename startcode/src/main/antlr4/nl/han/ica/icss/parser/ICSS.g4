@@ -51,7 +51,9 @@ idSelector: ID_IDENT;
 
 classSelector: CLASS_IDENT;
 
-tagSelector: LOWER_IDENT | CAPITAL_IDENT;
+lowerOrCapitalIdent: LOWER_IDENT | CAPITAL_IDENT;
+
+tagSelector: lowerOrCapitalIdent;
 
 stylerule: (idSelector | classSelector | tagSelector) OPEN_BRACE declaration* CLOSE_BRACE;
 
@@ -63,7 +65,7 @@ pixelLiteral: PIXELSIZE;
 
 scalarLiteral: SCALAR;
 
-variableLiteral: (LOWER_IDENT | CAPITAL_IDENT);
+variableLiteral: lowerOrCapitalIdent;
 
 value: colorLiteral | pixelLiteral | scalarLiteral | variableLiteral;
 

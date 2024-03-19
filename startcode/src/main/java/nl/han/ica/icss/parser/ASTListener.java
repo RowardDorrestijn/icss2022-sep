@@ -44,8 +44,8 @@ public class ASTListener extends ICSSBaseListener {
 
 	@Override public void enterVariable(ICSSParser.VariableContext ctx) {
 		VariableAssignment variable = new VariableAssignment();
-		variable.name = new VariableReference(ctx.LOWER_IDENT().getText() != null ? ctx.LOWER_IDENT().getText() : ctx.CAPITAL_IDENT().getText());
-		variable.expression = ctx
+		variable.name = new VariableReference(ctx.ASSIGNMENT_OPERATOR().getText());
+//		variable.expression = ctx.
 		currentContainer.push(variable);
 	}
 
