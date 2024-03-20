@@ -2,6 +2,7 @@ package nl.han.ica.icss.checker;
 
 import nl.han.ica.datastructures.IHANLinkedList;
 import nl.han.ica.icss.ast.*;
+import nl.han.ica.icss.ast.literals.ColorLiteral;
 import nl.han.ica.icss.ast.literals.PixelLiteral;
 import nl.han.ica.icss.ast.types.ExpressionType;
 
@@ -36,15 +37,25 @@ public class Checker {
     }
 
     private void checkDeclaration(Declaration declaration){
-//        switch (declaration.property.name){
-//            case "width":
-//                break;
-//        }
-        if(declaration.property.name.equals("width")){
-            if(!(declaration.expression instanceof PixelLiteral)){
-                declaration.setError("Wrong expression on property 'width'. Should be pixels.");
-            }
+
+        switch (declaration.property.name)
+        {
+            case "width":
+                if(!(declaration.expression instanceof PixelLiteral)){
+                    declaration.setError("Wrong expression on property 'width'. Should be pixels.");
+                }
+                break;
+            case "color":
+                if(!(declaration.expression instanceof ColorLiteral)){
+                    declaration.setError("Wrong expression on property 'color'. Should be a color.");
+                }
+                break;
+            case "background-color":
+                if(!(declaration.expression instanceof ColorLiteral)){
+                    declaration.setError("Wrong expression on property 'background-color'. Should be a color.");
+                }
+                break;
         }
     }
-    
+
 }

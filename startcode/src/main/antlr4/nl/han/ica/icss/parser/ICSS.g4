@@ -47,13 +47,9 @@ ASSIGNMENT_OPERATOR: ':=';
 //--- PARSER: ---
 stylesheet: variableAssignment* stylerule* EOF;
 
-idSelector: ID_IDENT;
+selector: ID_IDENT #idSelector | CLASS_IDENT #classSelector | (LOWER_IDENT | CAPITAL_IDENT) #tagSelector;
 
-classSelector: CLASS_IDENT;
-
-tagSelector: LOWER_IDENT | CAPITAL_IDENT;
-
-stylerule: (idSelector | classSelector | tagSelector) OPEN_BRACE declaration* CLOSE_BRACE;
+stylerule: selector OPEN_BRACE declaration* CLOSE_BRACE;
 
 declaration: LOWER_IDENT COLON (literal | variableReference) SEMICOLON;
 
