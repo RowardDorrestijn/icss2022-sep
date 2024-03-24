@@ -2,6 +2,7 @@ package nl.han.ica.datastructures;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.Stack;
 
 public class HANStack<T> implements IHANStack<T>{
     private LinkedList<T> stack = new LinkedList<T>();

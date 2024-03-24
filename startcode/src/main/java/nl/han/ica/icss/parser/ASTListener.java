@@ -10,6 +10,9 @@ import nl.han.ica.icss.ast.literals.BoolLiteral;
 import nl.han.ica.icss.ast.literals.ColorLiteral;
 import nl.han.ica.icss.ast.literals.PixelLiteral;
 import nl.han.ica.icss.ast.literals.ScalarLiteral;
+import nl.han.ica.icss.ast.operations.AddOperation;
+import nl.han.ica.icss.ast.operations.MultiplyOperation;
+import nl.han.ica.icss.ast.operations.SubtractOperation;
 import nl.han.ica.icss.ast.selectors.ClassSelector;
 import nl.han.ica.icss.ast.selectors.IdSelector;
 import nl.han.ica.icss.ast.selectors.TagSelector;
@@ -100,6 +103,35 @@ public class ASTListener extends ICSSBaseListener {
 	@Override public void exitDeclaration(ICSSParser.DeclarationContext ctx) {
 		Declaration declaration = (Declaration) currentContainer.pop();
 		currentContainer.peek().addChild(declaration);
+	}
+
+	@Override public void enterMultiplyOperation(ICSSParser.MultiplyOperationContext ctx){
+		Operation multiplyOperation = new MultiplyOperation();
+		currentContainer.push(multiplyOperation);
+	}
+
+	@Override public void exitMultiplyOperation(ICSSParser.MultiplyOperationContext ctx){
+		Operation multiplyOperation = (MultiplyOperation) currentContainer.pop();
+		currentContainer.peek().addChild(multiplyOperation);
+	}
+	@Override public void enterAddOperation(ICSSParser.AddOperationContext ctx){
+		Operation addOperation = new AddOperation();
+		currentContainer.push(addOperation);
+	}
+
+	@Override public void exitAddOperation(ICSSParser.AddOperationContext ctx){
+		Operation addOperation = (AddOperation) currentContainer.pop();
+		currentContainer.peek().addChild(addOperation);
+	}
+
+	@Override public void enterSubstractOperation(ICSSParser.SubstractOperationContext ctx){
+		Operation substractOperation = new SubtractOperation();
+		currentContainer.push(substractOperation);
+	}
+
+	@Override public void exitSubstractOperation(ICSSParser.SubstractOperationContext ctx){
+		Operation substractOperation = (SubtractOperation) currentContainer.pop();
+		currentContainer.peek().addChild(substractOperation);
 	}
 
 	@Override public void enterColorLiteral(ICSSParser.ColorLiteralContext ctx){

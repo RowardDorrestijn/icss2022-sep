@@ -53,7 +53,15 @@ stylerule: selector OPEN_BRACE declaration* CLOSE_BRACE;
 
 declaration: LOWER_IDENT COLON (literal | variableReference) SEMICOLON;
 
-literal: COLOR #colorLiteral | PIXELSIZE #pixelLiteral | SCALAR #scalarLiteral | PERCENTAGE #percentageLiteral | TRUE #trueLiteral | FALSE #falseLiteral;
+operation: (multiplyOperation | addOperation | substractOperation)+;
+
+multiplyOperation: (SCALAR | variableReference | PIXELSIZE) MUL (PIXELSIZE | SCALAR | variableReference | operation);
+
+addOperation: (SCALAR | variableReference | PIXELSIZE) PLUS (PIXELSIZE | SCALAR | variableReference  | operation);
+
+substractOperation: (SCALAR | variableReference | PIXELSIZE) MIN (PIXELSIZE | SCALAR | variableReference | operation);
+
+literal: COLOR #colorLiteral | (PIXELSIZE | operation) #pixelLiteral | SCALAR #scalarLiteral | PERCENTAGE #percentageLiteral | TRUE #trueLiteral | FALSE #falseLiteral;
 
 variableReference: CAPITAL_IDENT;
 

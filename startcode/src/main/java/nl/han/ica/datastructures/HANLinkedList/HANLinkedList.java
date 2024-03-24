@@ -8,7 +8,7 @@ public class HANLinkedList<T> implements IHANLinkedList<T> {
     @Override
     public void addFirst(T value) {
         Node<T> firstNode = new Node<T>(value);
-        firstNode.setNextNode(head);
+        firstNode.setNextNode(this.head);
         this.head = firstNode;
 
 
@@ -16,45 +16,86 @@ public class HANLinkedList<T> implements IHANLinkedList<T> {
 
     @Override
     public void clear() {
-
+        this.head = null;
     }
 
     @Override
-    public void insert(int index, Object value) {
-        while (nextNode.getNextNode() != null) {
-            nextNode = nextNode.getNextNode();
+    public void insert(int index, T value) {
+        Node<T> previousNodeToInsert = this.head;
+
+        if (index == 0) {
+            this.addFirst(value);
+        } else {
+            for (int i = 0; i < index - 1; i++) {
+                if (previousNodeToInsert.getNextNode() != null) {
+                    previousNodeToInsert = previousNodeToInsert.getNextNode();
+                }
+            }
+            Node<T> nodeToInsert = new Node<T>(value);
+            nodeToInsert.setNextNode(previousNodeToInsert.getNextNode());
+            previousNodeToInsert.setNextNode(nodeToInsert);
         }
     }
 
     @Override
     public void delete(int pos) {
-        Node<T> nodeToDelete = head;
+        Node<T> previousNodeToDelete = this.head;
         if (pos == 0) {
-            this.head = head.getNextNode();
+            this.head = this.head.getNextNode();
         } else {
             for (int i = 0; i < pos - 1; i++) {
-                nodeToDelete = nodeToDelete.getNextNode();
+                if (previousNodeToDelete.getNextNode() != null) {
+                    previousNodeToDelete = previousNodeToDelete.getNextNode();
+                }
+            }
+            Node<T> nodeToDelete = previousNodeToDelete.getNextNode();
+            if (nodeToDelete.getNextNode() != null) {
+                previousNodeToDelete.setNextNode(nodeToDelete.getNextNode());
+            } else {
+                previousNodeToDelete.setNextNode(null);
             }
         }
+
     }
 
     @Override
     public T get(int pos) {
-        return null;
+        Node<T> nodeToGet = this.head;
+        for (int i = 0; i < pos; i++) {
+            if(nodeToGet.getNextNode() != null){
+                nodeToGet = nodeToGet.getNextNode();
+            }
+        }
+        return nodeToGet.getData();
     }
 
     @Override
     public void removeFirst() {
-
+        this.head = this.head.getNextNode();
     }
 
     @Override
     public T getFirst() {
-        return null;
+        if(this.head != null){
+            return this.head.getData();
+        }else{
+            return null;
+        }
     }
 
     @Override
     public int getSize() {
-        return 0;
+        if(this.head == null){
+            return 0;
+        }
+
+        int size = 1;
+        Node<T> currentNode = this.head;
+
+        while(currentNode.getNextNode() != null){
+            currentNode = currentNode.getNextNode();
+            size++;
+        }
+        return size;
     }
 }
