@@ -51,15 +51,11 @@ selector: ID_IDENT #idSelector | CLASS_IDENT #classSelector | (LOWER_IDENT | CAP
 
 stylerule: selector OPEN_BRACE declaration* CLOSE_BRACE;
 
-declaration: LOWER_IDENT COLON (literal | variableReference | operation) SEMICOLON;
+declaration: LOWER_IDENT COLON (literal | variableReference | operationExpression) SEMICOLON;
 
-operation: (multiplyOperation | addOperation | substractOperation)+;
+operationLiteral: scalarLiteral | variableReference | pixelLiteral | percentageLiteral;
 
-multiplyOperation: (scalarLiteral | variableReference | pixelLiteral ) MUL (pixelLiteral | scalarLiteral | variableReference | operation);
-
-addOperation: (scalarLiteral | variableReference | pixelLiteral ) PLUS (pixelLiteral | scalarLiteral | variableReference | operation);
-
-substractOperation: (scalarLiteral | variableReference | pixelLiteral ) MIN (pixelLiteral | scalarLiteral | variableReference | operation);
+operationExpression: operationLiteral #defaultOperationValue | operationExpression MUL operationLiteral #multiplyOperation | operationExpression (PLUS | MIN) operationExpression #addOrSubtractOperation;
 
 pixelLiteral: PIXELSIZE;
 

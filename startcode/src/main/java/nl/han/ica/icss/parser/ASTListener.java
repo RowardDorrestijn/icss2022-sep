@@ -105,6 +105,7 @@ public class ASTListener extends ICSSBaseListener {
 		currentContainer.peek().addChild(declaration);
 	}
 
+
 	@Override public void enterMultiplyOperation(ICSSParser.MultiplyOperationContext ctx){
 		Operation multiplyOperation = new MultiplyOperation();
 		currentContainer.push(multiplyOperation);
@@ -114,24 +115,26 @@ public class ASTListener extends ICSSBaseListener {
 		Operation multiplyOperation = (MultiplyOperation) currentContainer.pop();
 		currentContainer.peek().addChild(multiplyOperation);
 	}
-	@Override public void enterAddOperation(ICSSParser.AddOperationContext ctx){
-		Operation addOperation = new AddOperation();
-		currentContainer.push(addOperation);
+
+	@Override public void enterAddOrSubtractOperation(ICSSParser.AddOrSubtractOperationContext ctx){
+		if(ctx.PLUS() != null){
+			Operation addOperation = new AddOperation();
+			currentContainer.push(addOperation);
+		}else{
+			Operation subtractOperation = new SubtractOperation();
+			currentContainer.push(subtractOperation);
+		}
+
 	}
 
-	@Override public void exitAddOperation(ICSSParser.AddOperationContext ctx){
-		Operation addOperation = (AddOperation) currentContainer.pop();
-		currentContainer.peek().addChild(addOperation);
-	}
-
-	@Override public void enterSubstractOperation(ICSSParser.SubstractOperationContext ctx){
-		Operation substractOperation = new SubtractOperation();
-		currentContainer.push(substractOperation);
-	}
-
-	@Override public void exitSubstractOperation(ICSSParser.SubstractOperationContext ctx){
-		Operation substractOperation = (SubtractOperation) currentContainer.pop();
-		currentContainer.peek().addChild(substractOperation);
+	@Override public void exitAddOrSubtractOperation(ICSSParser.AddOrSubtractOperationContext ctx){
+		if(ctx.PLUS() != null){
+			Operation addOperation = (AddOperation) currentContainer.pop();
+			currentContainer.peek().addChild(addOperation);
+		}else{
+			Operation subtractOperation = (SubtractOperation) currentContainer.pop();
+			currentContainer.peek().addChild(subtractOperation);
+		}
 	}
 
 	@Override public void enterColorLiteral(ICSSParser.ColorLiteralContext ctx){

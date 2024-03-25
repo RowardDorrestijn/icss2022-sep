@@ -55,52 +55,48 @@ public class Checker {
 
     }
 
-    private boolean checkOperation(Operation operation){
+    private boolean checkOperation(Operation operation) {
         Expression left = operation.lhs;
         Expression right = operation.rhs;
 
-        if(operation instanceof MultiplyOperation){
+        if (operation instanceof MultiplyOperation) {
             return checkMultiplyOperation(left, right);
         }
-        if(operation instanceof AddOperation){
+        if (operation instanceof AddOperation) {
             return checkAddOperation(left, right);
         }
-        if(operation instanceof SubtractOperation){
-            return checkSubstractOperation(left, right);
+        if (operation instanceof SubtractOperation) {
+            return checkSubtractOperation(left, right);
         }
         return false;
     }
 
-    private boolean checkMultiplyOperation(Expression left, Expression right){
-        if(right instanceof Operation){
-            if((left instanceof ScalarLiteral || left instanceof  PixelLiteral)  &&  checkOperation((Operation) right)){
-                return true;
-            }
-        } else if(left instanceof ScalarLiteral && right instanceof PixelLiteral){
+    private boolean checkMultiplyOperation(Expression left, Expression right) {
+        if (right instanceof Operation) {
+            return (left instanceof ScalarLiteral || left instanceof PixelLiteral) && checkOperation((Operation) right);
+        }else if (left instanceof Operation) {
+            return (right instanceof  ScalarLiteral || right instanceof PixelLiteral) && checkOperation((Operation) left);
+        } else if (left instanceof ScalarLiteral && right instanceof PixelLiteral) {
             return true;
-        } else if(left instanceof PixelLiteral && right instanceof ScalarLiteral){
-            return true;
-        }
-        return false;
+        } else return left instanceof PixelLiteral && right instanceof ScalarLiteral;
     }
 
-    private boolean checkAddOperation(Expression left, Expression right){
-        if(right instanceof Operation){
-            checkOperation((Operation) right);
-        }else if(left instanceof PixelLiteral && right instanceof PixelLiteral){
-            return true;
+    private boolean checkAddOperation(Expression left, Expression right) {
+        if (right instanceof Operation) {
+            return (left instanceof PixelLiteral && checkOperation((Operation) right));
+        } else if(left instanceof Operation){
+            return (right instanceof PixelLiteral && checkOperation((Operation) left));
         }
-        return false;
+        return left instanceof PixelLiteral && right instanceof PixelLiteral;
     }
 
-    private boolean checkSubstractOperation(Expression left, Expression right){
-        if(right instanceof Operation){
-            checkOperation((Operation) right);
-        }else if(left instanceof PixelLiteral && right instanceof PixelLiteral){
-            return true;
-        }
-        return false;
+    private boolean checkSubtractOperation(Expression left, Expression right) {
+        if (right instanceof Operation) {
+            return checkOperation((Operation) right);
+        } else return left instanceof PixelLiteral && right instanceof PixelLiteral;
     }
+
+
 
 
     private void checkStylerule(Stylerule rule){
