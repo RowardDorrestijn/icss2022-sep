@@ -4,11 +4,15 @@ import nl.han.ica.datastructures.HANLinkedList.HANLinkedList;
 import nl.han.ica.datastructures.IHANLinkedList;
 import nl.han.ica.icss.ast.*;
 import nl.han.ica.icss.ast.literals.*;
+import nl.han.ica.icss.ast.operations.AddOperation;
+import nl.han.ica.icss.ast.operations.MultiplyOperation;
+import nl.han.ica.icss.ast.operations.SubtractOperation;
 import nl.han.ica.icss.ast.types.ExpressionType;
+import nl.han.ica.icss.parser.ICSSParser;
 
 import java.io.Console;
 import java.util.HashMap;
-
+import java.util.concurrent.Flow;
 
 
 public class Checker {
@@ -51,6 +55,54 @@ public class Checker {
 
     }
 
+    private boolean checkOperation(Operation operation){
+        Expression left = operation.lhs;
+        Expression right = operation.rhs;
+
+        if(operation instanceof MultiplyOperation){
+            return checkMultiplyOperation(left, right);
+        }
+        if(operation instanceof AddOperation){
+            return checkAddOperation(left, right);
+        }
+        if(operation instanceof SubtractOperation){
+            return checkSubstractOperation(left, right);
+        }
+        return false;
+    }
+
+    private boolean checkMultiplyOperation(Expression left, Expression right){
+        if(right instanceof Operation){
+            if((left instanceof ScalarLiteral || left instanceof  PixelLiteral)  &&  checkOperation((Operation) right)){
+                return true;
+            }
+        } else if(left instanceof ScalarLiteral && right instanceof PixelLiteral){
+            return true;
+        } else if(left instanceof PixelLiteral && right instanceof ScalarLiteral){
+            return true;
+        }
+        return false;
+    }
+
+    private boolean checkAddOperation(Expression left, Expression right){
+        if(right instanceof Operation){
+            checkOperation((Operation) right);
+        }else if(left instanceof PixelLiteral && right instanceof PixelLiteral){
+            return true;
+        }
+        return false;
+    }
+
+    private boolean checkSubstractOperation(Expression left, Expression right){
+        if(right instanceof Operation){
+            checkOperation((Operation) right);
+        }else if(left instanceof PixelLiteral && right instanceof PixelLiteral){
+            return true;
+        }
+        return false;
+    }
+
+
     private void checkStylerule(Stylerule rule){
         for (ASTNode child : rule.getChildren()){
             if (child instanceof Declaration){
@@ -70,6 +122,11 @@ public class Checker {
                 if(declaration.expression instanceof VariableReference) {
                     if(variableTypes.getFirst().get(((VariableReference) declaration.expression).name) != ExpressionType.PIXEL){
                         declaration.setError("Wrong expression on property 'width'. Should be pixels.");
+                    }
+                }
+                else if(declaration.expression instanceof Operation){
+                    if(!checkOperation((Operation) declaration.expression)){
+                        declaration.setError("Wrong operation on property 'width'.");
                     }
                 }
                 else if(!(declaration.expression instanceof PixelLiteral)){

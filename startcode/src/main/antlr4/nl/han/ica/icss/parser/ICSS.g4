@@ -51,17 +51,29 @@ selector: ID_IDENT #idSelector | CLASS_IDENT #classSelector | (LOWER_IDENT | CAP
 
 stylerule: selector OPEN_BRACE declaration* CLOSE_BRACE;
 
-declaration: LOWER_IDENT COLON (literal | variableReference) SEMICOLON;
+declaration: LOWER_IDENT COLON (literal | variableReference | operation) SEMICOLON;
 
 operation: (multiplyOperation | addOperation | substractOperation)+;
 
-multiplyOperation: (SCALAR | variableReference | PIXELSIZE) MUL (PIXELSIZE | SCALAR | variableReference | operation);
+multiplyOperation: (scalarLiteral | variableReference | pixelLiteral ) MUL (pixelLiteral | scalarLiteral | variableReference | operation);
 
-addOperation: (SCALAR | variableReference | PIXELSIZE) PLUS (PIXELSIZE | SCALAR | variableReference  | operation);
+addOperation: (scalarLiteral | variableReference | pixelLiteral ) PLUS (pixelLiteral | scalarLiteral | variableReference | operation);
 
-substractOperation: (SCALAR | variableReference | PIXELSIZE) MIN (PIXELSIZE | SCALAR | variableReference | operation);
+substractOperation: (scalarLiteral | variableReference | pixelLiteral ) MIN (pixelLiteral | scalarLiteral | variableReference | operation);
 
-literal: COLOR #colorLiteral | (PIXELSIZE | operation) #pixelLiteral | SCALAR #scalarLiteral | PERCENTAGE #percentageLiteral | TRUE #trueLiteral | FALSE #falseLiteral;
+pixelLiteral: PIXELSIZE;
+
+scalarLiteral: SCALAR;
+
+colorLiteral: COLOR;
+
+percentageLiteral: PERCENTAGE;
+
+trueLiteral: TRUE;
+
+falseLiteral: FALSE;
+
+literal: colorLiteral | pixelLiteral | scalarLiteral | percentageLiteral | trueLiteral | falseLiteral;
 
 variableReference: CAPITAL_IDENT;
 
