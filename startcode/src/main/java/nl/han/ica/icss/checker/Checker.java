@@ -34,6 +34,7 @@ public class Checker {
                 checkVariableAssignment((VariableAssignment) parent);
             }
         }
+        this.variableTypes.removeFirst();
     }
 
     private void checkVariableAssignment(VariableAssignment variableAssignment){
@@ -55,48 +56,73 @@ public class Checker {
 
     }
 
-    private boolean checkOperation(Operation operation) {
+    private void checkOperation(Operation operation) {
         Expression left = operation.lhs;
         Expression right = operation.rhs;
 
+        if(left instanceof Operation){
+            checkOperation((Operation) left);
+        }
+        if(right instanceof Operation){
+            checkOperation((Operation) right);
+        }
+
+        if(left instanceof VariableReference){
+            left = checkAndGetVariable(left);
+        }
+
+        if(right instanceof VariableReference){
+            right = checkAndGetVariable(right);
+        }
+
+
+
         if (operation instanceof MultiplyOperation) {
-            return checkMultiplyOperation(left, right);
+            if(!checkMultiplyOperation(left, right)){
+                operation.setError("Wrong multiplication operation");
+            }
         }
-        if (operation instanceof AddOperation) {
-            return checkAddOperation(left, right);
+
+        if (operation instanceof AddOperation || operation instanceof SubtractOperation) {
+            if(!checkAddOrSubtractOperation(left, right)){
+                operation.setError("Wrong addition or subtraction operation");
+            }
         }
-        if (operation instanceof SubtractOperation) {
-            return checkSubtractOperation(left, right);
-        }
-        return false;
     }
 
     private boolean checkMultiplyOperation(Expression left, Expression right) {
-        if (right instanceof Operation) {
-            return (left instanceof ScalarLiteral || left instanceof PixelLiteral) && checkOperation((Operation) right);
-        }else if (left instanceof Operation) {
-            return (right instanceof  ScalarLiteral || right instanceof PixelLiteral) && checkOperation((Operation) left);
-        } else if (left instanceof ScalarLiteral && right instanceof PixelLiteral) {
-            return true;
-        } else return left instanceof PixelLiteral && right instanceof ScalarLiteral;
+        return (left instanceof ScalarLiteral || left instanceof Operation) && (right instanceof PixelLiteral || right instanceof Operation) || (left instanceof PixelLiteral || left instanceof Operation) && (right instanceof ScalarLiteral || right instanceof Operation);
     }
 
-    private boolean checkAddOperation(Expression left, Expression right) {
-        if (right instanceof Operation) {
-            return (left instanceof PixelLiteral && checkOperation((Operation) right));
-        } else if(left instanceof Operation){
-            return (right instanceof PixelLiteral && checkOperation((Operation) left));
+    private boolean checkAddOrSubtractOperation(Expression left, Expression right) {
+        return (left instanceof PixelLiteral || left instanceof Operation) && (right instanceof PixelLiteral || right instanceof Operation);
+    }
+
+    private Literal checkAndGetVariable(Expression expression){
+        ExpressionType expressionType = variableTypes.getFirst().get(((VariableReference) expression).name);
+        if(variableTypes.getFirst().get(((VariableReference) expression).name) == null){
+            expression.setError("Variable not in scope");
+        }else{
+            Literal literal = getLiterateFromExpressionType(expressionType);
+            if(literal == null){
+                expression.setError("Literal from variable not allowed in operations");
+            }
+            return literal;
         }
-        return left instanceof PixelLiteral && right instanceof PixelLiteral;
+        return null;
     }
 
-    private boolean checkSubtractOperation(Expression left, Expression right) {
-        if (right instanceof Operation) {
-            return checkOperation((Operation) right);
-        } else return left instanceof PixelLiteral && right instanceof PixelLiteral;
+    private Literal getLiterateFromExpressionType(ExpressionType expressionType){
+        switch (expressionType){
+            case PIXEL:
+                return new PixelLiteral("1px");
+            case PERCENTAGE:
+                return new PercentageLiteral("0%");
+            case SCALAR:
+                return new ScalarLiteral(0);
+        }
+        return null;
     }
-
-
 
 
     private void checkStylerule(Stylerule rule){
@@ -121,9 +147,7 @@ public class Checker {
                     }
                 }
                 else if(declaration.expression instanceof Operation){
-                    if(!checkOperation((Operation) declaration.expression)){
-                        declaration.setError("Wrong operation on property 'width'.");
-                    }
+                    checkOperation((Operation) declaration.expression);
                 }
                 else if(!(declaration.expression instanceof PixelLiteral)){
                     declaration.setError("Wrong expression on property 'width'. Should be pixels.");

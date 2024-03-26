@@ -51,7 +51,7 @@ public class Evaluator implements Transform {
         }else if(expression instanceof AddOperation){
             return evaluateAddExpression((AddOperation) expression);
         } else {
-            return evaluateSubstractExpression((SubtractOperation) expression);
+            return evaluateSubtractExpression((SubtractOperation) expression);
         }
     }
 
@@ -67,7 +67,7 @@ public class Evaluator implements Transform {
         return new PixelLiteral(left.value * right.value);
     }
 
-    private Expression evaluateSubstractExpression(SubtractOperation expression) {
+    private Expression evaluateSubtractExpression(SubtractOperation expression) {
         PixelLiteral left = (PixelLiteral) evaluateExpression(expression.lhs);
         PixelLiteral right = (PixelLiteral) evaluateExpression(expression.rhs);
         return new PixelLiteral(left.value - right.value);
