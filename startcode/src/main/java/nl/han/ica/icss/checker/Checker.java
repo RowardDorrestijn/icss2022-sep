@@ -67,6 +67,8 @@ public class Checker {
             checkOperation((Operation) right);
         }
 
+
+
         if(left instanceof VariableReference){
             left = checkAndGetVariable(left);
         }
@@ -91,7 +93,7 @@ public class Checker {
     }
 
     private boolean checkMultiplyOperation(Expression left, Expression right) {
-        return (left instanceof ScalarLiteral || left instanceof Operation) && (right instanceof PixelLiteral || right instanceof Operation) || (left instanceof PixelLiteral || left instanceof Operation) && (right instanceof ScalarLiteral || right instanceof Operation);
+        return (left instanceof ScalarLiteral || left instanceof Operation) && (right instanceof ScalarLiteral || right instanceof PixelLiteral || right instanceof Operation) || (left instanceof ScalarLiteral || left instanceof PixelLiteral || left instanceof Operation) && (right instanceof ScalarLiteral || right instanceof Operation);
     }
 
     private boolean checkAddOrSubtractOperation(Expression left, Expression right) {

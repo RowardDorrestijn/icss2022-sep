@@ -49,14 +49,22 @@ stylesheet: variableAssignment* stylerule* EOF;
 
 selector: ID_IDENT #idSelector | CLASS_IDENT #classSelector | (LOWER_IDENT | CAPITAL_IDENT) #tagSelector;
 
-stylerule: selector OPEN_BRACE declaration* CLOSE_BRACE;
+stylerule: selector OPEN_BRACE (declaration | ifClause)* CLOSE_BRACE;
 
-declaration: LOWER_IDENT COLON (literal | variableReference | operationExpression) SEMICOLON;
 
+declaration: LOWER_IDENT COLON (literal | variableReference | operationExpression ) SEMICOLON;
+
+ifClause: IF BOX_BRACKET_OPEN ((TRUE | FALSE) | CAPITAL_IDENT) BOX_BRACKET_CLOSE OPEN_BRACE (declaration | ifClause)* CLOSE_BRACE elseClause?;
+
+elseClause: ELSE OPEN_BRACE (declaration | ifClause)* CLOSE_BRACE;
+
+//Operations
 operationLiteral: scalarLiteral | variableReference | pixelLiteral | percentageLiteral;
 
 operationExpression: operationLiteral #defaultOperationValue | operationExpression MUL operationLiteral #multiplyOperation | operationExpression (PLUS | MIN) operationExpression #addOrSubtractOperation;
 
+
+//Literals
 pixelLiteral: PIXELSIZE;
 
 scalarLiteral: SCALAR;
@@ -71,8 +79,9 @@ falseLiteral: FALSE;
 
 literal: colorLiteral | pixelLiteral | scalarLiteral | percentageLiteral | trueLiteral | falseLiteral;
 
+//Variables
 variableReference: CAPITAL_IDENT;
 
-variableAssignment: variableReference ASSIGNMENT_OPERATOR (literal | variableReference) SEMICOLON;
+variableAssignment: variableReference ASSIGNMENT_OPERATOR (literal | variableReference | operationExpression) SEMICOLON;
 
 
