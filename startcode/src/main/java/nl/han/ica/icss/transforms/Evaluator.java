@@ -18,18 +18,16 @@ import java.util.LinkedList;
 public class Evaluator implements Transform {
 
     private LinkedList<HashMap<String, Literal>> variableValues;
-    private Stylesheet sheet;
 
     @Override
     public void apply(AST ast) {
         this.variableValues = new LinkedList<>();
-        this.sheet = ast.root;
-        applyStylesheet();
+        applyStylesheet(ast.root);
     }
 
-    private void applyStylesheet(){
+    private void applyStylesheet(Stylesheet sheet){
         this.variableValues.addFirst(new HashMap<>());
-        for(ASTNode parent : this.sheet.getChildren()){
+        for(ASTNode parent : sheet.getChildren()){
             if(parent instanceof Stylerule){
                 applyStylerule(parent);
             }else if(parent instanceof VariableAssignment){
@@ -52,7 +50,7 @@ public class Evaluator implements Transform {
                 applyVariableAssignment((VariableAssignment) child);
             } else if(child instanceof IfClause){
                 applyIfClause((IfClause) child, node);
-                this.sheet.removeChild(child);
+                node.removeChild(child); // Dit werkt dus niet, maar zou in theorie wel moeten werken. Zelfs als ik de regel hierboven comment wordt een ifClause niet verwijderd.
             }
         }
     }
