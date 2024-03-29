@@ -54,15 +54,16 @@ stylerule: selector OPEN_BRACE (declaration | ifClause)* CLOSE_BRACE;
 
 declaration: LOWER_IDENT COLON (literal | variableReference | operationExpression ) SEMICOLON;
 
-ifClause: IF BOX_BRACKET_OPEN ((TRUE | FALSE) | CAPITAL_IDENT) BOX_BRACKET_CLOSE OPEN_BRACE (declaration | ifClause)* CLOSE_BRACE elseClause?;
+//If/else clauses
 
-elseClause: ELSE OPEN_BRACE (declaration | ifClause)* CLOSE_BRACE;
+ifClause: IF BOX_BRACKET_OPEN ((trueLiteral | falseLiteral) | variableReference) BOX_BRACKET_CLOSE OPEN_BRACE (declaration | ifClause | variableAssignment)* CLOSE_BRACE elseClause?;
+
+elseClause: ELSE OPEN_BRACE (declaration | ifClause | variableAssignment)* CLOSE_BRACE;
 
 //Operations
 operationLiteral: scalarLiteral | variableReference | pixelLiteral | percentageLiteral;
 
 operationExpression: operationLiteral #defaultOperationValue | operationExpression MUL operationLiteral #multiplyOperation | operationExpression (PLUS | MIN) operationExpression #addOrSubtractOperation;
-
 
 //Literals
 pixelLiteral: PIXELSIZE;

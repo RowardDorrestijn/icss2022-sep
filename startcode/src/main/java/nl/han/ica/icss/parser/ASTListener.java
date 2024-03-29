@@ -6,10 +6,7 @@ import java.util.Stack;
 import com.sun.jdi.Value;
 import nl.han.ica.datastructures.HANStack;
 import nl.han.ica.icss.ast.*;
-import nl.han.ica.icss.ast.literals.BoolLiteral;
-import nl.han.ica.icss.ast.literals.ColorLiteral;
-import nl.han.ica.icss.ast.literals.PixelLiteral;
-import nl.han.ica.icss.ast.literals.ScalarLiteral;
+import nl.han.ica.icss.ast.literals.*;
 import nl.han.ica.icss.ast.operations.AddOperation;
 import nl.han.ica.icss.ast.operations.MultiplyOperation;
 import nl.han.ica.icss.ast.operations.SubtractOperation;
@@ -185,6 +182,16 @@ public class ASTListener extends ICSSBaseListener {
 	@Override public void exitScalarLiteral(ICSSParser.ScalarLiteralContext ctx){
 		Literal scalarLiteral = (ScalarLiteral) currentContainer.pop();
 		currentContainer.peek().addChild(scalarLiteral);
+	}
+
+	@Override public void enterPercentageLiteral(ICSSParser.PercentageLiteralContext ctx){
+		Literal percentageLiteral = new PercentageLiteral(ctx.getText());
+		currentContainer.push(percentageLiteral);
+	}
+
+	@Override public void exitPercentageLiteral(ICSSParser.PercentageLiteralContext ctx){
+		Literal percentageLiteral = (PercentageLiteral) currentContainer.pop();
+		currentContainer.peek().addChild(percentageLiteral);
 	}
 
 	@Override public void enterTrueLiteral(ICSSParser.TrueLiteralContext ctx){
